@@ -6,6 +6,8 @@
 
 An adaptable [Micropub](https://indieweb.org/micropub) server for Kirby3, designed to be highly adjust- and extendable.
 
+![translator](https://user-images.githubusercontent.com/6355217/80856036-bc1f7900-8c46-11ea-89fb-5bf986c9cff5.png)
+
 ## Installation
 
 ### Composer
@@ -34,7 +36,15 @@ Since Micropub uses the OAuth-based IndieAuth protocol for user identification, 
 
 The [IndieAuth setup page](https://indieauth.com/setup) provides a tool to test your setup. A successfully performed login on IndieAuth.com using your site's URL is the precondition for Micropub, and this plugin, to work.
 
-### 2. Link your Micropub endpoints in your template
+### 2. Set a token secret
+
+In addition to the IndieAuth authentication, the Micropub workflow requires a so-called "token endpoint"; it deals with setting a scope of allowed actions for the authenticated user. The token endpoint is built-in with the plugin, but requires a unique key to be set up in `site/config/config.php` - this has to be a random alphanumeric string of at least 10 characters:
+
+```php
+'sgkirby.micropublisher.jwtkey' => '<YOUR-KEY-STRING>',
+```
+
+### 3. Link your Micropub endpoints in your template
 
 Micropub software clients look up your endpoints' addresses from your HTML meta information. Add the following to the \<head\> section of your HTML template:
 
@@ -51,7 +61,7 @@ This renders the required <link> tags to inform Micropub clients how to access y
 
 _NB. Remember to empty any server-side caches before proceeding and after any changes to the configuration as of below._
 
-### 3. Set up your in individual processing rules
+### 4. Set up your in individual processing rules
 
 The default settings of the plugin correspond to the [Kirby Starterkit](https://getkirby.com/try). For use with any other setup, further configuration will likely be needed; see the [Configuration](#configuration) section below.
 
@@ -77,6 +87,16 @@ The test suite at https://micropub.rocks is highly recommended during setup. In 
 ## Options
 
 The plugin can (and, unless you run a barebone Starterkit-based website, will have to) be configured by adding settings to your `site/config/config.php`.
+
+### Token secret
+
+The built-in token endpoint requires a unique key to sign the permission tokens - this has to be a random alphanumeric string of at least 10 characters:
+
+```php
+'sgkirby.micropublisher.jwtkey' => '<YOUR-KEY-STRING>',
+```
+
+_NB. Changing this token later invalidates existing logins._
 
 ### Defaults
 
@@ -138,6 +158,8 @@ This is the most important and most powerful (and at first sight, admittedly, al
 "Post types" are representations of content on your website; for example you might have a post type "article" for longform blog posts, "note" for microblogging and "checkin" for posting locations. Post types commonly differ from each other by template used, blueprint fields, file attachments etc.
 
 Figuratively spoken, this array structure acts as a "translator" that interprets the incoming Micropub request (which is a content representation in Microformats) and assembles the Kirby page it should be turned into (an array of fields to create the new page from).
+
+![posttypes](https://user-images.githubusercontent.com/6355217/80856035-bb86e280-8c46-11ea-9a6f-a9308f3338e7.png)
 
 Every aspect of the following example is explained with the according index number (*1 etc.) below. Most fields are optional (falling back to the defaults hardwired into the plugin or adjusted with the settings described above), but the Micropub endpoint will return an error if not at least one entry under `fields` is set for every post type.
 
@@ -422,6 +444,8 @@ Some sites may use a post.create:after hook to alter the slug of newly created p
 ## Features
 
 ### Plugin features
+
+![micropubrocks](https://user-images.githubusercontent.com/6355217/80856033-ba55b580-8c46-11ea-823c-89891cc2da1b.png)
 
 The following Micropub features are supported:
 - [x] ...
