@@ -19,7 +19,7 @@ class Micropublisher
         // access token from request is either in header or in form parameter
         if (empty($accesstoken = kirby()->request()->header('Authorization'))) {
             $body = kirby()->request()->body()->toArray();
-            $accesstoken = 'Bearer ' . $body['access_token'] ?? null;
+            $accesstoken = 'Bearer ' . ($body['access_token'] ?? '');
         }
         if (strlen($accesstoken) < 10) {
             return new Response('{"error":"unauthorized","error_description":"No access token was provided in the request"}', 'application/json', 401);
