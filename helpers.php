@@ -10,6 +10,6 @@ function micropublisherEndpoints() {
 
 	echo $auth_endpoint
 		. '<link rel="token_endpoint" href="' . option( 'sgkirby.micropublisher.auth.token-endpoint', 'https://tokens.indieauth.com/token' ) . '" />'
-		. '<link rel="micropub" href="' . site()->url() . '/' . option( 'sgkirby.micropublisher.endpoint', 'micropub' ) . '" />';
+		. '<link rel="micropub" href="' . kirby()->urls()->base() . '/' . option( 'sgkirby.micropublisher.endpoint', 'micropub' ) . '" />';
 
 }

@@ -40,7 +40,7 @@ class Micropublisher
         // quit unless request is valid and authorised
         if (empty($response)) {
             return new Response('{"error":"unauthorized","error_description":"No access token was provided in the request"}', 'application/json', 401);
-        } elseif (rtrim($token['me'], '/') != rtrim(site()->url(), '/')) {
+        } elseif (rtrim($token['me'], '/') != rtrim(kirby()->urls()->base(), '/')) {
             return new Response('{"error":"forbidden","error_description":"Not authorized for this site"}', 'application/json', 403);
         }
 
@@ -92,7 +92,7 @@ class Micropublisher
 
         // Set headers, return location
         header('HTTP/1.1 201 Created');
-        header('Location: ' . site()->url() . '/media/micropub-uploads/' . $rnd . '/' . $name);
+        header('Location: ' . kirby()->urls()->media() . '/micropub-uploads/' . $rnd . '/' . $name);
         exit;
     }
 
@@ -147,10 +147,16 @@ class Micropublisher
                 'slug'     	=> $slug,
                 'template' 	=> $template,
                 'draft' 	=> ($status == 'listed' || $status == 'unlisted') ? false : true,
-                'content' 	=> $content,
             ]);
         } catch (Exception $e) {
             return new Response('{"error":"error","error_description":"Post could not be created: ' . $e->getMessage() . '"}', 'application/json', 500);
+        }
+
+        // store content in the newly created page
+        try {
+            $newpost->update($content, $targetlang);
+        } catch (Exception $e) {
+            return new Response('{"error":"error","error_description":"Content could not be saved: ' . $e->getMessage() . '"}', 'application/json', 500);
         }
 
         // new pages always created as unlisted, hence need to publish unless draft is desired
@@ -214,7 +220,7 @@ class Micropublisher
             $posttypes[] = [ 'type' => $n, 'name' => $v['name'] ];
         }
         $config = [
-            'media-endpoint' => site()->url() . '/' . option('sgkirby.micropublisher.endpoint', 'micropub'),
+            'media-endpoint' => kirby()->urls()->base() . '/' . option('sgkirby.micropublisher.endpoint', 'micropub'),
             'syndicate-to' => option('sgkirby.micropublisher.syndicate-to'),
             'post-types' => $posttypes,
             'categories' => page(option('sgkirby.micropublisher.categorylist.parent'))->children()->pluck(option('sgkirby.micropublisher.categorylist.taxonomy'), ',', true),
@@ -230,7 +236,7 @@ class Micropublisher
         }
         // other GET requests: fail gracefully
         else {
-            return new Response('<p>This is the Micropub endpoint for <a href="' . site()->url() . '">' . site()->url() . '</a></p>', 'text/html', 200);
+            return new Response('<p>This is the Micropub endpoint for <a href="' . kirby()->urls()->base() . '">' . kirby()->urls()->base() . '</a></p>', 'text/html', 200);
         }
     }
 
@@ -295,7 +301,7 @@ class Micropublisher
             'builtindefault' => [
                 'name'	=> 'Default',
                 'template'	=> option('sgkirby.micropublisher.default.template', 'note'),
-                'parent'		=> option('sgkirby.micropublisher.default.parent', 'notes'),
+                'parent'	=> option('sgkirby.micropublisher.default.parent', 'notes'),
                 'render' 	=> option('sgkirby.micropublisher.default.render', [
                     'name'		=> [ 'title', 'No title' ],
                     /*
@@ -412,6 +418,12 @@ class Micropublisher
                 // TODO: check that page exists, otherwise fall back to site()
                 $parent = page($posttype['parent']) ?? $defaultparent;
 
+                // target language is site default language, unless set for this specific post type
+                $targetlang = null;
+                if (is_string($posttype['language']) && kirby()->language($posttype['language']) !== null) {
+                    $targetlang = $posttype['language'];
+                }
+
                 // no further loops required; we have a match!
                 break;
             }
@@ -427,6 +439,7 @@ class Micropublisher
             'template'       => (string)$template,
             'status'         => (string)$status,
             'parent'         => $parent,
+            'targetlang'     => $targetlang,
         ];
     }
 

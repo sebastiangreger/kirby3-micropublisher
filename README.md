@@ -197,6 +197,8 @@ Every aspect of the following example is explained with the according index numb
     ],
     // slug building rules (optional)  *9
     'slug' => [ 'slug', 'title', [ 'text', 30 ] ],
+    // target language (optional)  *10
+    'language' => 'en',
   ],
 ],
 ```
@@ -403,6 +405,16 @@ A common rule template for many purposes is to compensate a missing/empty `slug`
 ```
 
 If no slug ruleset is provided for a post type: if defined, the globally defined rule set [`sgkirby.micropublisher.default.slug`](#default-slug) from config.php, or the global default (i.e. the `mp-slug` property if given, otherwise an epoch timestamp) is used.
+
+#### 10. Target language (optional)
+
+This setting only applies on multi-language sites.
+
+By default, new micropub content is created in a site's default language. To override, a valid two-letter language code can be provided, to create a single post type's content in a specific language.
+
+```php
+'language' => 'en',
+```
 
 ### Configuring the client UI
 
