@@ -63,7 +63,7 @@ class Micropublisher
 
             // micropub endpoint
             else {
-                return static::createPost($data);
+                return static::createPost();
             }
         }
     }
@@ -115,7 +115,7 @@ class Micropublisher
     /*
      * Deals with the submission of non-media content
      */
-    public static function createPost($data)
+    public static function createPost()
     {
         // write log file from scratch
         static::log('Micropub request to content endpoint', null, false);
@@ -252,8 +252,9 @@ class Micropublisher
 
         // detect JSON syntax and pre-process data variables accordingly (incl. HTML content)
         if (isset($data['properties'])) {
+            $type = str_replace('h-', '', $data['type']);
             $data = $data['properties'];
-            $data['h'] = str_replace('h-', '', $data['type' ]);
+            $data['h'] = $type;
             foreach ($data as $n => $v) {
                 if (is_array($v) && sizeof($v) == 1) {
                     if (is_array($v[0]) && array_key_exists('html', $v[0])) {
@@ -420,7 +421,7 @@ class Micropublisher
 
                 // target language is site default language, unless set for this specific post type
                 $targetlang = null;
-                if (is_string($posttype['language']) && kirby()->language($posttype['language']) !== null) {
+                if (array_key_exists('language', $posttype) && kirby()->language((string)$posttype['language']) !== null) {
                     $targetlang = $posttype['language'];
                 }
 
