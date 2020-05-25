@@ -33,8 +33,14 @@ class Micropublisher
                 'Authorization' => $accesstoken,
             ],
         ]);
-        // TODO: deal with response in JSON (or send accept headers for html only)
-        parse_str($response->content, $token);
+
+        // try to decode JSON, on error treat as form-encoded instead
+        $token = json_decode($response->content);
+        if (json_last_error() !== JSON_ERROR_NONE) {
+            parse_str($response->content, $token);
+        }
+
+        // get rid of the access token for security
         unset($accesstoken);
 
         // quit unless request is valid and authorised
