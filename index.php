@@ -15,11 +15,12 @@
 Kirby::plugin('sgkirby/micropublisher', [
 
     'options' => [
-        'slugprefix'            => '',
-        'auth.token-endpoint'   => 'https://tokens.indieauth.com/tokens',
-        'syndicate-to'          => [],
-        'categorylist.parent'   => 'home',
-        'categorylist.taxonomy' => 'tags',
+        'slugprefix'                    => '',
+        'auth.authorization-endpoint'   => 'https://indieauth.com/auth',
+        'auth.token-endpoint'           => 'https://tokens.indieauth.com/token',
+        'syndicate-to'                  => [],
+        'categorylist.parent'           => 'home',
+        'categorylist.taxonomy'         => 'tags',
     ],
 
     'routes' => require __DIR__ . '/config/routes.php',
