@@ -16,7 +16,7 @@ Kirby::plugin('sgkirby/micropublisher', [
 
     'options' => [
         'slugprefix'            => '',
-        'auth.token-endpoint'   => 'https://tokens.indieauth.com/tokens',
+        'auth.token-endpoint'   => 'https://tokens.indieauth.com/token',
         'syndicate-to'          => [],
         'categorylist.parent'   => 'home',
         'categorylist.taxonomy' => 'tags',
