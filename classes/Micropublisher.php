@@ -160,16 +160,16 @@ class Micropublisher
 
         // store content in the newly created page
         try {
-            $newpost->update($content, $targetlang);
+            $newpost = $newpost->update($content, $targetlang);
         } catch (Exception $e) {
             return new Response('{"error":"error","error_description":"Content could not be saved: ' . $e->getMessage() . '"}', 'application/json', 500);
         }
 
         // new pages always created as unlisted, hence need to publish unless draft is desired
         if ($status === 'listed') {
-            $newpost->changeStatus('listed');
+            $newpost = $newpost->changeStatus('listed');
         } elseif ($status === 'unlisted') {
-            $newpost->changeStatus('unlisted');
+            $newpost = $newpost->changeStatus('unlisted');
         }
 
         // remove temporary uploads older than a day
@@ -228,8 +228,10 @@ class Micropublisher
         $config = [
             'media-endpoint' => kirby()->urls()->base() . '/' . option('sgkirby.micropublisher.endpoint', 'micropub'),
             'syndicate-to' => option('sgkirby.micropublisher.syndicate-to'),
+            /*
             'post-types' => $posttypes,
-            'categories' => page(option('sgkirby.micropublisher.categorylist.parent'))->children()->pluck(option('sgkirby.micropublisher.categorylist.taxonomy'), ',', true),
+            'categories' => page(option('sgkirby.micropublisher.categorylist.parent'))->index()->pluck(option('sgkirby.micropublisher.categorylist.taxonomy'), ',', true),
+            */
         ];
 
         // q=syndicate-to: tell client where I can syndicate to
@@ -305,8 +307,8 @@ class Micropublisher
     public static function getPosttypeConfig()
     {
         return option('sgkirby.micropublisher.posttypes', [
-            'builtindefault' => [
-                'name'	=> 'Default',
+            'note' => [
+                'name'	=> 'Note',
                 'template'	=> option('sgkirby.micropublisher.default.template', 'note'),
                 'parent'	=> option('sgkirby.micropublisher.default.parent', 'notes'),
                 'render' 	=> option('sgkirby.micropublisher.default.render', [
@@ -395,7 +397,7 @@ class Micropublisher
                 }
 
                 // slug rules, if set
-                $slugrules = $posttype['slug'] ?? option('sgkirby.micropublisher.default.slug', 'slug');
+                $slugrules = $posttype['slug'] ?? option('sgkirby.micropublisher.default.slug', ['slug']);
 
                 // template is defined in post type setup array
                 $template = $posttype['template'] ?? option('sgkirby.micropublisher.default.template', 'default');

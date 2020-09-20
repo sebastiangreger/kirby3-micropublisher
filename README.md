@@ -131,7 +131,7 @@ sgkirby.micropublisher.default.parent' => 'blog',
 The URL slug is by default created from a submitted slug property; as last resort fallback, an epoch timestamp is used. This default behaviour can be changed globally. The following example adds the default setting array to the config (for a detailed explanation of the syntax and how to build more complex slug rulesets see [below in the post type field definition](#9-slug-design-rules-optional) which uses the same syntax):
 
 ```php
-'sgkirby.micropublisher.default.slug' => 'slug',
+'sgkirby.micropublisher.default.slug' => ['slug'],
 ```
 
 #### Default rendering rules
@@ -395,13 +395,13 @@ For every post type, a separate rule set for building the slug can be defined. I
 This is the minimal definition, equal to the hardwired default; it uses the `mp-slug` (or deprecated `slug`) property if submitted by the Micropub client and not empty:
 
 ```php
-'slug' => 'slug',
+'slug' => ['slug'],
 ```
 
 A common rule template for many purposes is to compensate a missing/empty `slug` property by (in that order) turning either the post title or an excerpt of the text into the slug (NB. here, the final field name from the Kirby blueprint has to be used, not the property name from the Micropub request). The following example illustrates that: the three values in the array are processed in the given order and the first rule leading to a valid slug is used - use the `mp-slug` property, turn the `title` field into a slug or create a slug from the first 30 characters of the `text` field:
 
 ```php
-'slug' => [ 'slug', 'title', [ 'text', 30 ] ],
+'slug' => ['slug', 'title', ['text', 30]],
 ```
 
 If no slug ruleset is provided for a post type: if defined, the globally defined rule set [`sgkirby.micropublisher.default.slug`](#default-slug) from config.php, or the global default (i.e. the `mp-slug` property if given, otherwise an epoch timestamp) is used.
