@@ -152,7 +152,9 @@ class Micropublisher
             $newpost = $parent->createChild([
                 'slug'     	=> $slug,
                 'template' 	=> $template,
+                /*
                 'draft' 	=> ($status == 'listed' || $status == 'unlisted') ? false : true,
+                */
             ]);
         } catch (Exception $e) {
             return new Response('{"error":"error","error_description":"Post could not be created: ' . $e->getMessage() . '"}', 'application/json', 500);
