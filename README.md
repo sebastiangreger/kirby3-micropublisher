@@ -285,6 +285,14 @@ For example, a "checkin" type post (posting a geolocation) could be detected by 
 ],
 ```
 
+This also allows to identify post types based on attachments: for example to make a rule not match for a submission that contains a photo, we can define:
+
+```php
+'identify' => [
+  'hasnot' => ['photo'],
+],
+```
+
 _NB. the value for the `has` and `hasnot` variables are an array of strings_
 
 #### 7. Rendering rules

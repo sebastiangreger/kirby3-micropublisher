@@ -192,7 +192,7 @@ class Micropublisher
                 ]);
                 // if desired, set this image as cover
                 $coverfieldname = (string)$posttype['files'][$attachment[3]][2] ?? null;
-                if ($attachment[3] == 'photo' && !empty($coverset) && !empty($coverfieldname)) {
+                if ($attachment[3] == 'photo' && empty($coverset) && !empty($coverfieldname)) {
                     $newpost->update([
                         $coverfieldname	=> $attachment[0],
                     ]);
@@ -359,20 +359,36 @@ class Micropublisher
 
             // otherwise need a precise match of has/hasnot fields to determine type
             else {
+                // loop 1: over all the required fields for a match
                 if (isset($posttype['identify']['has'])) {
                     foreach ($posttype['identify']['has'] as $has) {
+                        // key is a field in the submitted data
                         if (array_key_exists($has, $data)) {
                             $match = true;
-                        } else {
+                        }
+                        // key is the type of a multipart file attachment
+                        elseif (in_array($has, ['photo', 'audio', 'video']) && array_key_exists($has, kirby()->request()->files()->toArray())) {
+                            $match = true;
+                        }
+                        // otherwise not applicable
+                        else {
                             $nomatch = true;
                         }
                     }
                 }
+                // loop 2: over fields that shall not be present to match
                 if (isset($posttype['identify']['hasnot'])) {
                     foreach ($posttype['identify']['hasnot'] as $hasnot) {
+                        // no field in the submitted data with this key
                         if (! array_key_exists($hasnot, $data)) {
                             $match = true;
-                        } else {
+                        }
+                        // no multipart file attachment with type of the key
+                        elseif (in_array($hasnot, ['photo', 'audio', 'video']) && !array_key_exists($has, kirby()->request()->files()->toArray())) {
+                            $match = true;
+                        }
+                        // otherwise not applicable
+                        else {
                             $nomatch = true;
                         }
                     }
