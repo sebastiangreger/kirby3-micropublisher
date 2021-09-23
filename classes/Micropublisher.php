@@ -192,7 +192,7 @@ class Micropublisher
                 ]);
                 // if desired, set this image as cover
                 $coverfieldname = (string)$posttype['files'][$attachment[3]][2] ?? null;
-                if ($attachment[3] == 'photo' && !empty($coverset) && !empty($coverfieldname)) {
+                if ($attachment[3] == 'photo' && empty($coverset) && !empty($coverfieldname)) {
                     $newpost->update([
                         $coverfieldname	=> $attachment[0],
                     ]);
