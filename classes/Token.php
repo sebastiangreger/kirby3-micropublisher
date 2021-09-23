@@ -42,6 +42,12 @@ class Token
      */
     public static function verifyAuthCode()
     {
+        // check correct grant type; 'authorization_code' is default
+        $granttype = get('grant_type', 'authorization_code');
+        if ($granttype !== 'authorization_code') {
+            return new Response('Token endpoint only accepts grant type `authorization_code`.', 'text/html', 500);
+        }
+
         // set the URL of the site to log in to (formerly part of the request as 'me' property)
         $me = site()->url();
         $response = Remote::get($me);
