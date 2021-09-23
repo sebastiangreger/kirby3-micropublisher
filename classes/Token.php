@@ -42,8 +42,10 @@ class Token
      */
     public static function verifyAuthCode()
     {
-        // discover auth endpoint from the website given as 'me' property
-        $response = Remote::get($_POST['me']);
+        // discover auth endpoint from the website (formerly part of the request as 'me' property)
+        $me = site()->url();
+        $response = Remote::get($me);
+
         if (preg_match_all('!\<link(.*?)\>!i', $response->content(), $links)) {
             foreach ($links[0] as $link) {
                 if (!Str::contains($link, 'rel="authorization_endpoint"')) {
@@ -71,7 +73,7 @@ class Token
             ],
             'data' => [
                 'code' => $_POST['code'],
-                'me' => $_POST['me'],
+                'me' => $me,
                 'redirect_uri' => $_POST['redirect_uri'],
                 'client_id' => $_POST['client_id'],
             ],
@@ -81,7 +83,6 @@ class Token
         // TODO: deal with response in JSON (or send accept headers for html only)
         parse_str($response->content, $auth);
         $scope = $auth['scope'];
-        $me = $_POST['me'];
 
         // create the access token for the Micropub client
         $token_data = [
