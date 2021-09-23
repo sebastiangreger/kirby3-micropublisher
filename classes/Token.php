@@ -42,10 +42,11 @@ class Token
      */
     public static function verifyAuthCode()
     {
-        // discover auth endpoint from the website (formerly part of the request as 'me' property)
+        // set the URL of the site to log in to (formerly part of the request as 'me' property)
         $me = site()->url();
         $response = Remote::get($me);
 
+        // discover auth endpoint from the website
         if (preg_match_all('!\<link(.*?)\>!i', $response->content(), $links)) {
             foreach ($links[0] as $link) {
                 if (!Str::contains($link, 'rel="authorization_endpoint"')) {
