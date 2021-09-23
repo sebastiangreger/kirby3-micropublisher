@@ -1,7 +1,7 @@
 {
     "name": "sgkirby/micropublisher",
     "description": "An adaptable Micropub endpoint for Kirby3",
-    "version": "1.0-beta.3",
+    "version": "1.0-beta.4",
     "type": "kirby-plugin",
     "license": "MIT",
     "authors": [
