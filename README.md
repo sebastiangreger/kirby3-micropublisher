@@ -338,19 +338,41 @@ Some properties are specified to be sent via Micropub as data structures. For ex
 
 ##### Anonymous function
 
-Using an anonymous function as a callback allows for fairly advanced processing of the content. The three (optional) variables are the value of the submitted field (\$value), the field name (\$field = the first parameter), and the default value (\$default = the second parameter). The function may return a string, which is then stored in the Kirby content file for the according field, or an array of multiple field values. The function in the following example would for instance not only modify the string, but also change the title field (here, order of the commands matters, as later changes will override the earlier - here, for example the title from processing the `name` Microformat value would be erased by the new value set by the function). The function has to always return either a string (then used as the final value to be saved for this field) or as an array (enabling to set multiple fields to be saved, including such that are not present in the post type fields definition, as long as it exists in the Kirby blueprint):
+Using an anonymous function as a callback allows for fairly advanced processing of the content. The four (optional) variables are the value of the submitted field (\$value), the field name (\$field = the first parameter), the default value (\$default = the second parameter), and `$data` which exposes all the unprocessed data submitted via the Micropub protocol (minus some authentication-related parts for security).
+
+The function may return a string, which is then stored in the Kirby content file for the according field, or an array of multiple field values. The function in the following example would for instance not only modify the string, but also change the title field (here, order of the commands matters, as later changes will override the earlier - here, for example the title from processing the `name` Microformat value would be erased by the new value set by the function). The function has to always return either a string (then used as the final value to be saved for this field) or as an array (enabling to set multiple fields to be saved, including such that are not present in the post type fields definition, as long as it exists in the Kirby blueprint):
 
 ```php
 'render' => [
-  'content' => [ 'text', '', function( $value, $fieldname, $default ) {
+  'content' => ['text', '', function($value, $fieldname, $default, $data) {
     return [
       'title' => 'Modified',
       $fieldname => $value . ' and some more text',
-  ]; }
+    ];
+  }]
 ],
 ```
 
-For even more advanced functionalities, the anonymous function can be called using `function($value, $fieldname, $default) use (array $data) {}`, which then provides access to `$data`, exposing all the unprocessed data submitted via the Micropub protocol (minus some authentication-related parts for security).
+For example, it would be possible to modify the default rendering rule to parse all hashtags contained in the microformat field `content` and add them to the tags submitted via microformat field `category` using this callback (NB. the `category` field is not present in the `render` array, as it is filled from within the callback of field `content`):
+
+```php
+'render' => [
+  'name'     => [ 'title', 'No title' ],
+  'content'  => [ 'text', '', function($value, $fieldname, $default, $data) {
+    // parse `content` value for hashtags
+    preg_match_all('/#(\w+)/', $value, $parsedTags);
+    // merge parsed hashtags with tags from submitted `category` values
+    $allTags = array_merge($parsedTags[1], $data['category']);
+    return [
+      // save submitted `content` into content file's `text` field
+      $fieldname => $value,
+      // turn tags array into content-separated string and save into content file's `tags` field
+      'tags' => implode(',', $allTags),
+    ];
+  }],
+  'published'	=> [ 'date', strftime( '%F %T' ), 'datetime' ],
+],
+```
 
 #### 8. Accepted files (optional)
 
@@ -474,8 +496,8 @@ The following Kirby-specific features are supported:
 The following [Micropub extensions](https://indieweb.org/Micropub-extensions) are supported:
 - [x] mp-slug (set a URL slug in the client)
 - [x] post-status (switch between draft/published in the client)
-- [x] Query for Supported Vocabulary
-- [x] Query for Category/Tag List
+- [ ] Query for Supported Vocabulary
+- [ ] Query for Category/Tag List
 - [x] Media Endpoint Extensions
 
 ## Requirements

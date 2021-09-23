@@ -481,7 +481,7 @@ class Micropublisher
                     if (isset($field[2])) {
                         // ...either processing anonymous function
                         if (! is_string($field[2]) && is_callable($field[2])) {
-                            $value = $field[2]($data[$mfname], $field[0], $field[1]);
+                            $value = $field[2]($data[$mfname], $field[0], $field[1], $data);
                             // in case an array is returned, fill the according fields with its contents
                             if (is_array($value)) {
                                 foreach ($value as $k => $v) {

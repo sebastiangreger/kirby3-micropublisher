@@ -4,6 +4,13 @@ namespace sgkirby\Micropublisher;
 
 return [
     [
+        'pattern' => 'debug',
+        'method' => 'GET|POST',
+        'action'  => function () {
+            return Debug::debug();
+        }
+    ],
+    [
         'pattern' => 'tokens',
         'method' => 'GET|POST',
         'action'  => function () {
