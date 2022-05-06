@@ -225,11 +225,16 @@ class Micropublisher
             // TODO: use array name if no name specified
             $posttypes[] = [ 'type' => $n, 'name' => $v['name'] ];
         }
+        if (empty(option('sgkirby.micropublisher.categorylist.array'))) {
+            $categories = page(option('sgkirby.micropublisher.categorylist.parent'))->children()->pluck(option('sgkirby.micropublisher.categorylist.taxonomy'), ',', true);
+        } else {
+            $categories = option('sgkirby.micropublisher.categorylist.array');
+        }
         $config = [
             'media-endpoint' => kirby()->urls()->base() . '/' . option('sgkirby.micropublisher.endpoint', 'micropub'),
             'syndicate-to' => option('sgkirby.micropublisher.syndicate-to'),
             'post-types' => $posttypes,
-            'categories' => page(option('sgkirby.micropublisher.categorylist.parent'))->children()->pluck(option('sgkirby.micropublisher.categorylist.taxonomy'), ',', true),
+            'categories' => $categories,
         ];
 
         // q=syndicate-to: tell client where I can syndicate to
@@ -493,7 +498,7 @@ class Micropublisher
                     if (isset($field[2])) {
                         // ...either processing anonymous function
                         if (! is_string($field[2]) && is_callable($field[2])) {
-                            $value = $field[2]($data[$mfname], $field[0], $field[1]);
+                            $value = $field[2]($data[$mfname], $field[0], $field[1], $data);
                             // in case an array is returned, fill the according fields with its contents
                             if (is_array($value)) {
                                 foreach ($value as $k => $v) {

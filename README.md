@@ -358,7 +358,7 @@ Using an anonymous function as a callback allows for fairly advanced processing 
 ],
 ```
 
-For even more advanced functionalities, the anonymous function can be called using `function($value, $fieldname, $default) use (array $data) {}`, which then provides access to `$data`, exposing all the unprocessed data submitted via the Micropub protocol (minus some authentication-related parts for security).
+For even more advanced functionalities, the anonymous function can be called using `function($value, $fieldname, $default, $data) {}`, which then provides access to `$data`, exposing all the unprocessed data submitted via the Micropub protocol (minus some authentication-related parts for security).
 
 #### 8. Accepted files (optional)
 
@@ -426,12 +426,22 @@ By default, new micropub content is created in a site's default language. To ove
 
 ### Configuring the client UI
 
-Micropub clients might query your Micropub endpoint to retrieve some settings. If you would like to make use of tags or categories and wish for them to show up in the according form field, you may tell the plugin what tags/categories to communicate to the client. For example, to provide a list of your existing tags to the client, the following two config lines indicate the parent of the pages to be polled for existing tags and the name of the field to be plucked:
+Micropub clients might query your Micropub endpoint to retrieve some settings. If you would like to make use of tags or categories and wish for them to show up in the according form field, you may tell the plugin what tags/categories to communicate to the client.
+
+For the moment, this can be achieved by setting up a list of tags/categories in `config.php` (you may use some custom functionality to load this dynamically):
+
+```php
+'sgkirby.micropublisher.categorylist.array' => ['tag1', 'tag2', 'tag3'],
+```
+
+Alternatively, to provide a list of your existing tags to the client, the following two config lines indicate the parent of the pages to be polled for existing tags and the name of the field to be plucked (this expects a setup where all content files are direct children of that `parent` page and contain a list of tags in the field indicated):
 
 ```php
 'sgkirby.micropublisher.categorylist.parent' => 'blog',
 'sgkirby.micropublisher.categorylist.taxonomy' => 'tags',
 ```
+
+*NB. This category config option is likely to change in an upcoming beta version.*
 
 ### Niche settings
 
