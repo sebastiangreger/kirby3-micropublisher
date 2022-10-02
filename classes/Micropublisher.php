@@ -35,7 +35,7 @@ class Micropublisher
         ]);
 
         // try to decode JSON, on error treat as form-encoded instead
-        $token = json_decode($response->content);
+        $token = json_decode($response->content, true);
         if (json_last_error() !== JSON_ERROR_NONE) {
             parse_str($response->content, $token);
         }
@@ -160,16 +160,16 @@ class Micropublisher
 
         // store content in the newly created page
         try {
-            $newpost->update($content, $targetlang);
+            $newpost = $newpost->update($content, $targetlang);
         } catch (Exception $e) {
             return new Response('{"error":"error","error_description":"Content could not be saved: ' . $e->getMessage() . '"}', 'application/json', 500);
         }
 
         // new pages always created as unlisted, hence need to publish unless draft is desired
         if ($status === 'listed') {
-            $newpost->changeStatus('listed');
+            $newpost = $newpost->changeStatus('listed');
         } elseif ($status === 'unlisted') {
-            $newpost->changeStatus('unlisted');
+            $newpost = $newpost->changeStatus('unlisted');
         }
 
         // remove temporary uploads older than a day
@@ -193,7 +193,7 @@ class Micropublisher
                 // if desired, set this image as cover
                 $coverfieldname = (string)$posttype['files'][$attachment[3]][2] ?? null;
                 if ($attachment[3] == 'photo' && empty($coverset) && !empty($coverfieldname)) {
-                    $newpost->update([
+                    $newpost = $newpost->update([
                         $coverfieldname	=> $attachment[0],
                     ]);
                     // ensure this is only executed for the first photo
@@ -209,7 +209,7 @@ class Micropublisher
         if ($status == 'listed' || $status == 'unlisted') {
             header('Location: ' . $newpost->url());
         } else {
-            header('Location: ' . $newpost->panelUrl());
+            header('Location: ' . $newpost->panel()->url());
         }
         exit;
     }
@@ -310,8 +310,8 @@ class Micropublisher
     public static function getPosttypeConfig()
     {
         return option('sgkirby.micropublisher.posttypes', [
-            'builtindefault' => [
-                'name'	=> 'Default',
+            'note' => [
+                'name'	=> 'Note',
                 'template'	=> option('sgkirby.micropublisher.default.template', 'note'),
                 'parent'	=> option('sgkirby.micropublisher.default.parent', 'notes'),
                 'render' 	=> option('sgkirby.micropublisher.default.render', [
@@ -444,7 +444,7 @@ class Micropublisher
                 // for the parent page: post type specific default overrides site-wide default setting overrides plugin default
                 $defaultparent = option('sgkirby.micropublisher.default.parent') ? page(option('sgkirby.micropublisher.default.parent')) : site();
                 // TODO: check that page exists, otherwise fall back to site()
-                $parent = page($posttype['parent']) ?? $defaultparent;
+                $parent = array_key_exists('parent', $posttype) ? page($posttype['parent']) : $defaultparent;
 
                 // target language is site default language, unless set for this specific post type
                 $targetlang = null;

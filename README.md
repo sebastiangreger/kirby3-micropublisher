@@ -1,6 +1,6 @@
 # Kirby3 Micropublisher
 
-⚠ _This plugin is in Beta stage; expect breaking changes that are not backward compatible between versions until it reaches v1.0 stable! You are invited to play around with it (use the Kirby Starterkit for an easy start) and report any problems or observations as an [Issue](https://github.com/sebastiangreger/kirby3-micropublisher/issues); please subscribe to "Watch releases" if you want to get updated on new releases._
+⚠ _This plugin is in (eternal?) Beta and not currently maintained on a regular basis; developed as a personal pet project, it changes and evolves as do my personal needs. I merely publish it here for the benefit of the [Indieweb](https://indieweb.org) community. You are invited to play around with it (use the Kirby Starterkit for an easy start) and report any problems or observations as an [Issue](https://github.com/sebastiangreger/kirby3-micropublisher/issues), but I cannot promise any support._
 
 ## Overview
 
@@ -350,7 +350,7 @@ Using an anonymous function as a callback allows for fairly advanced processing 
 
 ```php
 'render' => [
-  'content' => [ 'text', '', function( $value, $fieldname, $default ) {
+  'content' => ['text', '', function($value, $fieldname, $default) {
     return [
       'title' => 'Modified',
       $fieldname => $value . ' and some more text',
@@ -409,7 +409,7 @@ This is the minimal definition, equal to the hardwired default; it uses the `mp-
 A common rule template for many purposes is to compensate a missing/empty `slug` property by (in that order) turning either the post title or an excerpt of the text into the slug (NB. here, the final field name from the Kirby blueprint has to be used, not the property name from the Micropub request). The following example illustrates that: the three values in the array are processed in the given order and the first rule leading to a valid slug is used - use the `mp-slug` property, turn the `title` field into a slug or create a slug from the first 30 characters of the `text` field:
 
 ```php
-'slug' => [ 'slug', 'title', [ 'text', 30 ] ],
+'slug' => ['slug', 'title', ['text', 30]],
 ```
 
 If no slug ruleset is provided for a post type: if defined, the globally defined rule set [`sgkirby.micropublisher.default.slug`](#default-slug) from config.php, or the global default (i.e. the `mp-slug` property if given, otherwise an epoch timestamp) is used.
