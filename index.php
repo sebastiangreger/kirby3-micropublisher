@@ -3,7 +3,7 @@
 /**
  * Kirby 3 Micropublisher
  *
- * @version   1.0-beta.4
+ * @version   1.0-beta.5
  * @author    Sebastian Greger <msg@sebastiangreger.net>
  * @copyright Sebastian Greger <msg@sebastiangreger.net>
  * @link      https://github.com/sebastiangreger/kirby3-micropublisher
