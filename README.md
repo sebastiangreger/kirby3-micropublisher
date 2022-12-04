@@ -1,6 +1,6 @@
-# Kirby3 Micropublisher
+⚠ This plugin is in eternal beta and **not maintained on a regular basis**; developed as a personal pet project, it changes and evolves as do my personal needs. I merely publish it here for the benefit of the [Indieweb](https://indieweb.org) community. You are invited to play around with it (use the Kirby Starterkit for an easy start) and report any problems or observations as an [Issue](https://github.com/sebastiangreger/kirby3-micropublisher/issues), but I cannot promise any support.
 
-⚠ _This plugin is in (eternal?) Beta and not currently maintained on a regular basis; developed as a personal pet project, it changes and evolves as do my personal needs. I merely publish it here for the benefit of the [Indieweb](https://indieweb.org) community. You are invited to play around with it (use the Kirby Starterkit for an easy start) and report any problems or observations as an [Issue](https://github.com/sebastiangreger/kirby3-micropublisher/issues), but I cannot promise any support._
+# Kirby3 Micropublisher
 
 ## Overview
 

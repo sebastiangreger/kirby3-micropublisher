@@ -107,8 +107,12 @@ class Micropublisher
      */
     public static function log($title, $body, $append = true)
     {
+        // create log dir if not exists
+        if (!Dir::exists(kirby()->root('site') . '/logs/micropublisher')) {
+            Dir::make(kirby()->root('site') . '/logs/micropublisher');
+        }
+
         // write raw data to log file in micropublisher debug mode
-        // TODO: Dir::make(kirby()->root('site') . '/logs/micropublisher');
         F::write(
             kirby()->root('site') . '/logs/micropublisher/micropub.log',
             '>>> ' . date('Y-m-d H:i:s') . ' '
@@ -160,7 +164,7 @@ class Micropublisher
 
         // store content in the newly created page
         try {
-            $newpost = $newpost->update($content, $targetlang);
+            $newpost = $newpost->save($content, $targetlang);
         } catch (Exception $e) {
             return new Response('{"error":"error","error_description":"Content could not be saved: ' . $e->getMessage() . '"}', 'application/json', 500);
         }
@@ -193,7 +197,7 @@ class Micropublisher
                 // if desired, set this image as cover
                 $coverfieldname = (string)$posttype['files'][$attachment[3]][2] ?? null;
                 if ($attachment[3] == 'photo' && empty($coverset) && !empty($coverfieldname)) {
-                    $newpost = $newpost->update([
+                    $newpost = $newpost->save([
                         $coverfieldname	=> $attachment[0],
                     ]);
                     // ensure this is only executed for the first photo
